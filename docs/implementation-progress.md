@@ -50,3 +50,7 @@ The first attempt used `Spotify/src/{backend,frontend,shared}` with workspaces; 
   browser hydration check were NOT done (no credentials / no browser tool).
   Fixes found by the integration check: frontend `typecheck` now runs `next typegen` first and tsconfig no longer excludes
   `.next` (global `PageProps` types were missing on a clean checkout).
+- Post-Phase-3 test pass (scratchpad: 22 API tests + 20 real-Chromium checks, all passing): found and fixed two backend issues. (1) A copied
+  access token kept working after logout / logout-all until it expired (up to 15 min); the guard now also checks the token's
+  session. (2) 429 responses only had `Retry-After-strict`; the standard `Retry-After` is now sent. The browser run also
+  confirmed no console errors or hydration warnings on the auth screens.

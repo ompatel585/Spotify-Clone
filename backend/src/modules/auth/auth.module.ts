@@ -38,6 +38,6 @@ import { GoogleStrategy } from "./strategies/google.strategy.js";
 			useFactory: (config: AuthConfig) => (config.google.enabled ? new GoogleStrategy(config.google) : null),
 		},
 	],
-	exports: [TokenService],
+	exports: [TokenService, SessionsRepository],
 })
 export class AuthModule {}

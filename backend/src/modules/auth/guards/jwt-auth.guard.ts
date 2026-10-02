@@ -8,6 +8,7 @@ import { UsersService } from "../../users/users.service.js";
 import { ACCESS_COOKIE } from "../constants/auth.constants.js";
 import { readCookie } from "../services/cookie.service.js";
 import { TokenService } from "../services/token.service.js";
+import { SessionsRepository } from "../sessions/sessions.repository.js";
 
 const BEARER_PREFIX = "Bearer ";
 
@@ -20,7 +21,8 @@ function extractAccessToken(request: Request): string | undefined {
 /**
  * Default-deny: every route needs a valid access token unless marked `@Public()`.
  * `@OptionalAuth()` attaches the user when a valid token is present and never rejects.
- * The user is re-read from the database on each request, so deletions and role changes apply at once.
+ * The user and the token's session are re-read on each request, so deletions, role changes, "log out" and
+ * "log out of all devices" take effect at once instead of when the 15-minute access token runs out.
  */
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
@@ -28,6 +30,7 @@ export class JwtAuthGuard implements CanActivate {
 		private readonly reflector: Reflector,
 		private readonly tokens: TokenService,
 		private readonly users: UsersService,
+		private readonly sessions: SessionsRepository,
 	) {}
 
 	async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -53,7 +56,11 @@ export class JwtAuthGuard implements CanActivate {
 		if (!token) return null;
 		try {
 			const payload = this.tokens.verifyAccess(token);
-			return await this.users.findCurrentById(payload.sub);
+			const [user, sessionActive] = await Promise.all([
+				this.users.findCurrentById(payload.sub),
+				this.sessions.isActive(payload.fam, payload.sub),
+			]);
+			return sessionActive ? user : null;
 		} catch (error) {
 			if (error instanceof UnauthorizedException) return null;
 			throw error;

@@ -78,7 +78,8 @@ Audio progress (`currentTime`) stays outside Redux to avoid four dispatches per 
 - One `sessions` document per device login (`family` uuid). `/auth/refresh` rotates the refresh token with an atomic compare-and-swap on the stored hash.
 - A token that was just replaced is accepted for 10 s (`REFRESH_REUSE_GRACE_MS`) so two simultaneous refreshes from one browser don't log the user out; the loser gets a new access cookie only. Any other stale token revokes the whole family (`TOKEN_REUSED`, 401).
 - Refresh is sliding (each rotation extends `expiresAt`). A failed refresh clears both cookies.
-- The access token is not checked against the session on every request, only the user is (loaded fresh, so role changes and deletions apply at once). After logout an already-issued access token works until it expires (max 15 min).
+- On every request the guard re-reads the user **and** checks that the access token's session (`fam`) is still active (two indexed lookups, run in parallel). So "log out", "log out of all devices", reuse detection, role changes and account deletion all take effect immediately, not when the 15-minute access token expires.
+- Rate-limit responses (429) carry the standard `Retry-After` header (the throttler's own `Retry-After-strict` is kept too).
 - Every route requires a valid access token unless marked `@Public()`; `@OptionalAuth()` attaches the user without rejecting. Admin routes use `@Roles(UserRole.Admin)`.
 - Google OAuth uses a signed `oauth_state` cookie (10 min). Only Google-verified emails are accepted; linking by email refuses accounts already linked to another Google id.
 - Error codes: `EMAIL_TAKEN` (409, `details.email`), `INVALID_CREDENTIALS` (401, same body for unknown email and wrong password), `UNAUTHORIZED`, `TOKEN_REUSED`/`SESSION_REVOKED` (401), `VALIDATION_FAILED` (400).
