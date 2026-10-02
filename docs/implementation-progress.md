@@ -4,7 +4,7 @@ Resume point after any interruption (session limit, crash). Update at the end of
 
 | Phase | Branch | Status | PR |
 |---|---|---|---|
-| 1 Foundation & tooling | feature/project-foundation | in review | |
+| 1 Foundation & tooling | feature/project-foundation | done | #2 |
 | 2 Core infrastructure & design system | | | |
 | 3 Auth & users | | | |
 | 4 Catalog & app shell | | | |
