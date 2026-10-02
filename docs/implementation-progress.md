@@ -7,7 +7,7 @@ Resume point after any interruption (session limit, crash). Update at the end of
 | 1 Foundation & tooling | feature/project-foundation | done | #2 |
 | 2 Core infrastructure & design system | feature/core-infrastructure | done | #3 |
 | 3 Auth & users | feature/auth-and-users | done | #4 |
-| 4 Catalog & app shell | | | |
+| 4 Catalog & app shell | feature/catalog-and-app-shell | done | #7 |
 | 5 Audio player | | | |
 | 6 Discovery, search & library | | | |
 | 7 Realtime presence | | | |
@@ -54,3 +54,9 @@ The first attempt used `Spotify/src/{backend,frontend,shared}` with workspaces; 
   access token kept working after logout / logout-all until it expired (up to 15 min); the guard now also checks the token's
   session. (2) 429 responses only had `Retry-After-strict`; the standard `Retry-After` is now sent. The browser run also
   confirmed no console errors or hydration warnings on the auth screens.
+- Phase 4: albums + songs API (public, one aggregation per list, ETag + Cache-Control), idempotent seed (4 albums, 18 songs,
+  playCount never reset), 40 media files under frontend/public/media (word-only kebab-case names), Spotify-style resizable app
+  shell (sidebar, topbar, mobile bottom nav), home (greeting, albums, new releases) and album page with generateMetadata.
+  Tests (scratchpad): 12 catalog API + 20 real-browser checks pass; Phase 3 suites (22 API + 20 browser) still pass.
+  Known, not fixed: on a cold `next dev` image cache one 48px sidebar thumbnail can take long to generate; it did not
+  reproduce with warm cache or via curl, so it is treated as a dev-server quirk. Re-check on a production build.
