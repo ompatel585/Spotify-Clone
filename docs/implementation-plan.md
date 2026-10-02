@@ -68,51 +68,33 @@ Client state lives in `store/` (player, realtime, ui slices + listener middlewar
 
 ---
 
-## Phase 1 — Monorepo foundation & tooling
+## Phase 1 — Foundation & tooling  ✅ merged (PR #2)
+
+Two independent apps (`backend/`, `frontend/`) plus `docs/`. Config files sit outside `src/`; all code is inside `src/`.
 
 | # | Side | Path | Purpose |
 |---|---|---|---|
-| 1 | Root | package.json | Workspaces (`src/*`), root scripts: dev / build / lint / typecheck / test |
-| 2 | Root | .gitignore | Node, Next, dist, env, coverage |
-| 3 | Root | .nvmrc | Pin Node 24 |
-| 4 | Root | .editorconfig | Editor consistency |
-| 5 | Root | .prettierrc | Formatting rules |
-| 6 | Root | .prettierignore | Formatting exclusions |
-| 7 | Root | tsconfig.base.json | Shared strict compiler options |
-| 8 | Root | commitlint.config.mjs | Conventional commits |
-| 9 | Root | lint-staged.config.mjs | Lint/format staged files |
-| 10 | Root | .husky/pre-commit | Runs lint-staged |
-| 11 | Root | .husky/commit-msg | Runs commitlint |
-| 12 | Root | README.md | Setup, env, scripts |
-| 13 | Root | CLAUDE.md | Project rules for AI sessions (points to answer format + this plan) |
-| 14 | Root | docs/implementation-plan.md | This file |
-| 15 | Root | docs/architecture.md | Architecture diagrams, request/socket flows, decisions |
-| 16 | SH | package.json | `@spotify/shared` package, build to dist (ESM + d.ts) |
-| 17 | SH | tsconfig.json | Library build config |
-| 18 | SH | index.ts | Barrel export |
-| 19 | SH | constants/roles.ts | `UserRole` values |
-| 20 | SH | constants/limits.ts | Page sizes, upload size/type limits, message length |
-| 21 | SH | types/pagination.types.ts | `Paginated<T>`, `CursorPage<T>` |
-| 22 | BE | package.json | Nest 12 deps + scripts (tsc build, watch, start:prod) |
-| 23 | BE | tsconfig.json | ESM, decorators + metadata, path aliases |
-| 24 | BE | tsconfig.build.json | Excludes tests |
-| 25 | BE | eslint.config.mjs | typescript-eslint flat config |
-| 26 | BE | .env.example | All env vars documented |
-| 27 | BE | main.ts | Bootstrap entry |
-| 28 | BE | app.module.ts | Root module |
-| 29 | BE | modules/health/health.module.ts | Health module |
-| 30 | BE | modules/health/health.controller.ts | `GET /api/health` |
-| 31 | FE | package.json | Next 16 deps + scripts |
-| 32 | FE | tsconfig.json | Strict, `@/*` alias |
-| 33 | FE | next.config.ts | Rewrites `/api/*` → API, image remote patterns, security headers |
-| 34 | FE | postcss.config.mjs | Tailwind v4 plugin |
-| 35 | FE | eslint.config.mjs | Next + TS lint |
-| 36 | FE | .env.example | Public env vars |
-| 37 | FE | app/layout.tsx | Root HTML layout |
-| 38 | FE | app/(main)/page.tsx | Placeholder home (replaced in Phase 4) |
-| 39 | FE | styles/globals.css | Tailwind v4 import + design tokens (`@theme`) |
+| 1 | Root | .gitignore, .gitattributes | Ignore build output / env files; LF line endings |
+| 2 | Root | README.md | Setup, scripts, structure |
+| 3 | Root | CLAUDE.md | Project rules for AI sessions |
+| 4 | Root | docs/implementation-plan.md | This file |
+| 5 | Root | docs/architecture.md | Layering, REST + socket contract, data model |
+| 6 | Root | docs/implementation-progress.md | Resume tracker and deviations |
+| 7 | BE | package.json | Nest 12 deps + scripts (tsc build, watch, start:prod) |
+| 8 | BE | tsconfig.json, tsconfig.build.json | NodeNext ESM, decorators + metadata |
+| 9 | BE | biome.json | Lint + format (TS 7 has no compiler API for ESLint) |
+| 10 | BE | .env.example | Every env var documented |
+| 11 | BE | src/main.ts, src/app.module.ts | Bootstrap + root module |
+| 12 | BE | src/modules/health/* (module, controller, service) | `GET /api/health` |
+| 13 | BE | src/contracts/index.ts | API contract types (mirrored in the frontend) |
+| 14 | FE | package.json | Next 16 deps + scripts |
+| 15 | FE | tsconfig.json, next.config.ts, postcss.config.mjs | Strict TS, `@/*` alias, `/api` + `/socket.io` rewrites, security headers |
+| 16 | FE | biome.json, .env.example | Lint + env |
+| 17 | FE | src/app/layout.tsx, src/app/(main)/page.tsx | Root layout + placeholder home |
+| 18 | FE | src/styles/globals.css | Tailwind v4 + design tokens |
+| 19 | FE | src/types/contracts.ts | Mirror of the API contract |
 
-**After Phase 1 you have:** a monorepo that installs with one `npm install`. `npm run dev` starts the API on :5000 and the web app on :3000. `GET /api/health` works through the Next proxy. Typecheck, lint, Prettier and commit hooks all run, and the shared package builds and is imported by both apps.
+**After Phase 1 you have:** two apps that each install and run on their own. The API serves `GET /api/health` on :5000. The web app serves a placeholder page on :3000 and proxies `/api/*` to the API. Typecheck, lint and build pass in both. **It is a skeleton only: no database, users, or real features yet.**
 
 ---
 
@@ -199,8 +181,8 @@ Also updates: BE `main.ts`, `app.module.ts`, `health.controller.ts` (Mongo healt
 
 | # | Side | Path | Purpose |
 |---|---|---|---|
-| 108 | SH | types/user.types.ts | `PublicUser`, `CurrentUser` |
-| 109 | SH | types/auth.types.ts | Auth request/response types |
+| 108 | BE+FE | types/user.types.ts | `PublicUser`, `CurrentUser` |
+| 109 | BE+FE | types/auth.types.ts | Auth request/response types |
 | 110 | BE | modules/users/users.module.ts | Users module |
 | 111 | BE | modules/users/users.controller.ts | `GET/PATCH /users/me`, `GET /users` (people list) |
 | 112 | BE | modules/users/users.service.ts | Profile logic, admin promotion |
@@ -257,7 +239,7 @@ Also updates: BE `app.module.ts` (global guards); FE `api/base-api.ts`.
 
 | # | Side | Path | Purpose |
 |---|---|---|---|
-| 155 | SH | types/music.types.ts | `Song`, `Album`, `AlbumWithTracks` |
+| 155 | BE+FE | types/music.types.ts | `Song`, `Album`, `AlbumWithTracks` |
 | 156 | BE | modules/albums/albums.module.ts | Albums module |
 | 157 | BE | modules/albums/albums.controller.ts | `GET /albums` (paginated), `GET /albums/:id` (with tracks) |
 | 158 | BE | modules/albums/albums.service.ts | Album logic |
@@ -367,7 +349,7 @@ Also updates: FE `store/index.ts`, `store/root-reducer.ts`, `providers/app-provi
 
 | # | Side | Path | Purpose |
 |---|---|---|---|
-| 243 | SH | types/search.types.ts | Search result types |
+| 243 | BE+FE | types/search.types.ts | Search result types |
 | 244 | BE | modules/discovery/discovery.module.ts | Discovery module |
 | 245 | BE | modules/discovery/discovery.controller.ts | `/featured`, `/trending`, `/made-for-you`, `/recently-played` |
 | 246 | BE | modules/discovery/discovery.service.ts | Trending (7-day plays), made-for-you (top artists → unheard songs, fallback) |
@@ -413,8 +395,8 @@ Also updates: FE `views/home-view.tsx`, `components/player/now-playing.tsx`, `co
 
 | # | Side | Path | Purpose |
 |---|---|---|---|
-| 278 | SH | socket/socket-events.ts | Typed `ClientToServer` / `ServerToClient` event maps |
-| 279 | SH | socket/socket-payloads.ts | Event payload types |
+| 278 | BE+FE | socket/socket-events.ts | Typed `ClientToServer` / `ServerToClient` event maps |
+| 279 | BE+FE | socket/socket-payloads.ts | Event payload types |
 | 280 | BE | bootstrap/setup-socket-adapter.ts | Registers the socket adapter |
 | 281 | BE | modules/realtime/realtime.module.ts | Realtime module |
 | 282 | BE | modules/realtime/adapters/authenticated-io.adapter.ts | CORS, ping, buffer limits, auth middleware |
@@ -452,7 +434,7 @@ Also updates: BE `main.ts`, `app.module.ts`, `auth.controller.ts`; FE `store/ind
 
 | # | Side | Path | Purpose |
 |---|---|---|---|
-| 306 | SH | types/chat.types.ts | `Message`, `Conversation` |
+| 306 | BE+FE | types/chat.types.ts | `Message`, `Conversation` |
 | 307 | BE | modules/chat/chat.module.ts | Chat module |
 | 308 | BE | modules/chat/chat.controller.ts | Conversations, cursor messages, REST send fallback, mark read |
 | 309 | BE | modules/chat/chat.service.ts | Chat logic |
@@ -494,8 +476,8 @@ Also updates: FE `providers/socket-provider.tsx`, `sidebar-nav.tsx` (unread tota
 
 | # | Side | Path | Purpose |
 |---|---|---|---|
-| 337 | SH | types/stats.types.ts | Dashboard types |
-| 338 | SH | types/media.types.ts | Upload signature types |
+| 337 | BE+FE | types/stats.types.ts | Dashboard types |
+| 338 | BE+FE | types/media.types.ts | Upload signature types |
 | 339 | BE | modules/media/media.module.ts | Media module |
 | 340 | BE | modules/media/media.controller.ts | `POST /media/signature` (admin) |
 | 341 | BE | modules/media/media.service.ts | Signed params, folders, delete by public id, URL ownership check |
