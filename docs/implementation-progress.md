@@ -5,7 +5,7 @@ Resume point after any interruption (session limit, crash). Update at the end of
 | Phase | Branch | Status | PR |
 |---|---|---|---|
 | 1 Foundation & tooling | feature/project-foundation | done | #2 |
-| 2 Core infrastructure & design system | | | |
+| 2 Core infrastructure & design system | feature/core-infrastructure | done | #3 |
 | 3 Auth & users | | | |
 | 4 Catalog & app shell | | | |
 | 5 Audio player | | | |
@@ -33,3 +33,11 @@ The first attempt used `Spotify/src/{backend,frontend,shared}` with workspaces; 
 ## Log
 - Phase 1: TS 7 verified with Nest 12 DI and the Next 16.3 build; both apps run independently; `/api/health` works
   through the Next proxy. Typecheck + Biome clean in both apps.
+- Phase 2: backend infrastructure (validated config, pino logs with request ids, uniform error filters, rate limiting
+  with a strict tier, Helmet/CORS, Swagger, Mongo connection with retry, transaction fallback, health live/ready) and
+  frontend design system (store, RTK Query base, 18 UI components, error/404 pages, component showcase at `/`).
+  Verified on both apps: lint, typecheck and build clean; full stack run against local MongoDB, `/api/health` through the proxy.
+  Deviations: health keeps its own `{status, uptime, db}` body even on 503 (probes need it); env is validated in `main.ts`
+  and in each config factory rather than via ConfigModule `validate`; frontend uses the unified `radix-ui` package;
+  `app/error.tsx` uses Next 16's `retry` prop; extra files: request-id middleware, validation-errors util, request-timeout and
+  strict-throttle decorators (backend), api-status and toast-demo-button (frontend).
