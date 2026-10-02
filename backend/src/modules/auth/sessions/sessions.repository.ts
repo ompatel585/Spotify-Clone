@@ -37,6 +37,14 @@ export class SessionsRepository extends BaseRepository<Session> {
 		});
 	}
 
+	/** True while the session exists, is not revoked and has not expired. Backed by the unique `family` index. */
+	async isActive(family: string, userId: string, now = new Date()): Promise<boolean> {
+		const hit = await this.model
+			.exists({ family, userId: new Types.ObjectId(userId), revokedAt: null, expiresAt: { $gt: now } })
+			.exec();
+		return hit !== null;
+	}
+
 	findByFamily(family: string): Promise<Lean<Session> | null> {
 		return this.findOne({ family });
 	}
