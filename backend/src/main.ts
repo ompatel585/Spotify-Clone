@@ -8,10 +8,13 @@ import { setupSecurity } from "./bootstrap/setup-security.js";
 import { setupSwagger } from "./bootstrap/setup-swagger.js";
 import { SHUTDOWN_FORCE_EXIT_MS } from "./common/constants/app.constants.js";
 import { type AppConfig, appConfig, validateEnv } from "./config/index.js";
+import { applyDnsServers } from "./infrastructure/database/dns.js";
 
 async function bootstrap(): Promise<void> {
 	// Fail before Nest starts so a misconfiguration prints one clear message, not a DI stack trace.
-	validateEnv();
+	const env = validateEnv();
+	// Before Nest connects to MongoDB: Atlas mongodb+srv:// URIs need a working SRV lookup.
+	applyDnsServers(env.DNS_SERVERS);
 
 	const app = await NestFactory.create<NestExpressApplication>(AppModule, { bufferLogs: true });
 	const logger = app.get(Logger);
@@ -27,9 +30,9 @@ async function bootstrap(): Promise<void> {
 		setTimeout(() => process.exit(1), SHUTDOWN_FORCE_EXIT_MS).unref();
 	});
 
-	const { port, env } = app.get<AppConfig>(appConfig.KEY);
+	const { port, env: nodeEnv } = app.get<AppConfig>(appConfig.KEY);
 	await app.listen(port);
-	logger.log(`API listening on port ${port} (${env}), prefix /api`);
+	logger.log(`API listening on port ${port} (${nodeEnv}), prefix /api`);
 }
 
 bootstrap().catch((error: unknown) => {
