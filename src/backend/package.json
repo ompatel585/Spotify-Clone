@@ -1,0 +1,49 @@
+{
+	"name": "@spotify/backend",
+	"version": "1.0.0",
+	"private": true,
+	"description": "Spotify clone API — NestJS 12, MongoDB, Socket.io",
+	"type": "module",
+	"main": "dist/main.js",
+	"scripts": {
+		"build": "tsc -p tsconfig.build.json",
+		"dev": "tsc -p tsconfig.build.json && concurrently -k -n tsc,node -c gray,cyan \"tsc -p tsconfig.build.json --watch --preserveWatchOutput\" \"node --enable-source-maps --watch-path=dist --env-file-if-exists=.env dist/main.js\"",
+		"start": "node --enable-source-maps --env-file-if-exists=.env dist/main.js",
+		"start:prod": "node --enable-source-maps dist/main.js",
+		"typecheck": "tsc -p tsconfig.json --noEmit",
+		"lint": "biome check .",
+		"seed": "tsc -p tsconfig.build.json && node --enable-source-maps --env-file-if-exists=.env dist/infrastructure/database/seeds/seed.js"
+	},
+	"dependencies": {
+		"@nestjs/common": "^12.1.2",
+		"@nestjs/config": "latest",
+		"@nestjs/core": "^12.1.2",
+		"@nestjs/mongoose": "^12.0.0",
+		"@nestjs/platform-express": "^12.1.2",
+		"@nestjs/swagger": "latest",
+		"@nestjs/terminus": "latest",
+		"@nestjs/throttler": "latest",
+		"@spotify/shared": "*",
+		"class-transformer": "latest",
+		"class-validator": "latest",
+		"compression": "latest",
+		"cookie-parser": "latest",
+		"helmet": "latest",
+		"mongoose": "^9.10.3",
+		"nestjs-pino": "latest",
+		"pino": "latest",
+		"pino-http": "latest",
+		"reflect-metadata": "^0.2.2",
+		"rxjs": "^7.8.2",
+		"zod": "latest"
+	},
+	"devDependencies": {
+		"@types/compression": "latest",
+		"@types/cookie-parser": "latest",
+		"@types/express": "latest",
+		"@types/node": "^24",
+		"concurrently": "latest",
+		"pino-pretty": "latest",
+		"typescript": "^7.0.2"
+	}
+}
