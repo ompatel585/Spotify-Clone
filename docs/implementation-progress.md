@@ -6,7 +6,7 @@ Resume point after any interruption (session limit, crash). Update at the end of
 |---|---|---|---|
 | 1 Foundation & tooling | feature/project-foundation | done | #2 |
 | 2 Core infrastructure & design system | feature/core-infrastructure | done | #3 |
-| 3 Auth & users | | | |
+| 3 Auth & users | feature/auth-and-users | done | #4 |
 | 4 Catalog & app shell | | | |
 | 5 Audio player | | | |
 | 6 Discovery, search & library | | | |
@@ -41,3 +41,12 @@ The first attempt used `Spotify/src/{backend,frontend,shared}` with workspaces; 
   and in each config factory rather than via ConfigModule `validate`; frontend uses the unified `radix-ui` package;
   `app/error.tsx` uses Next 16's `retry` prop; extra files: request-id middleware, validation-errors util, request-timeout and
   strict-throttle decorators (backend), api-status and toast-demo-button (frontend).
+- Phase 3: register/login/refresh/logout/logout-all/me, Google OAuth (off until credentials are set), argon2id, rotating
+  refresh sessions per device with reuse detection, default-deny global guards, admin role from ADMIN_EMAILS, users list;
+  frontend login/register pages, route protection in proxy.ts, single-flight 401 refresh, user menu. The Phase 2 component
+  showcase moved to /design-system (dev only) after the user saw it as the first screen; `/` now redirects to /login.
+  Verified: lint, typecheck, build clean in both apps from a clean checkout; full stack run with two users through the Next
+  proxy (own data, device-independent sessions, rotation, logout vs logout-all, 401/409 cases). Real Google login and a
+  browser hydration check were NOT done (no credentials / no browser tool).
+  Fixes found by the integration check: frontend `typecheck` now runs `next typegen` first and tsconfig no longer excludes
+  `.next` (global `PageProps` types were missing on a clean checkout).
