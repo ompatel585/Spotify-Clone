@@ -1,0 +1,39 @@
+{
+  "name": "spotify",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Realtime Spotify clone — Next.js 16 + NestJS 12 + MongoDB",
+  "type": "module",
+  "workspaces": [
+    "src/shared",
+    "src/backend",
+    "src/frontend"
+  ],
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev": "npm run build -w @spotify/shared && concurrently -k -n shared,api,web -c gray,cyan,magenta \"npm run dev -w @spotify/shared\" \"npm run dev -w @spotify/backend\" \"npm run dev -w @spotify/frontend\"",
+    "build": "npm run build -w @spotify/shared && npm run build -w @spotify/backend && npm run build -w @spotify/frontend",
+    "start": "concurrently -k -n api,web \"npm run start:prod -w @spotify/backend\" \"npm run start -w @spotify/frontend\"",
+    "typecheck": "npm run build -w @spotify/shared && npm run typecheck --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "test:e2e": "npm run test:e2e --workspaces --if-present",
+    "seed": "npm run seed -w @spotify/backend",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "postinstall": "npm run build -w @spotify/shared",
+    "prepare": "husky || true"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "latest",
+    "@commitlint/config-conventional": "latest",
+    "concurrently": "latest",
+    "husky": "latest",
+    "lint-staged": "latest",
+    "prettier": "latest",
+    "prettier-plugin-tailwindcss": "latest",
+    "typescript": "^7.0.2"
+  }
+}
