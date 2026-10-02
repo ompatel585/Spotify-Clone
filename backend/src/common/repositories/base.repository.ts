@@ -69,7 +69,11 @@ export abstract class BaseRepository<T> {
 		options: ReadOptions = {},
 	): Promise<Lean<T> | null> {
 		return this.model
-			.findByIdAndUpdate(id, update, { new: true, runValidators: true, session: options.session })
+			.findByIdAndUpdate(id, update, {
+				returnDocument: "after",
+				runValidators: true,
+				session: options.session,
+			})
 			.lean<Lean<T>>()
 			.exec();
 	}

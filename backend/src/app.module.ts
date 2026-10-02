@@ -7,7 +7,11 @@ import { ThrottlerProxyGuard } from "./common/guards/throttler-proxy.guard.js";
 import { configNamespaces, type ThrottleConfig, throttleConfig } from "./config/index.js";
 import { DatabaseModule } from "./infrastructure/database/database.module.js";
 import { LoggerModule } from "./infrastructure/logger/logger.module.js";
+import { AuthModule } from "./modules/auth/auth.module.js";
+import { JwtAuthGuard } from "./modules/auth/guards/jwt-auth.guard.js";
+import { RolesGuard } from "./modules/auth/guards/roles.guard.js";
 import { HealthModule } from "./modules/health/health.module.js";
+import { UsersModule } from "./modules/users/users.module.js";
 
 @Module({
 	imports: [
@@ -33,8 +37,15 @@ import { HealthModule } from "./modules/health/health.module.js";
 				],
 			}),
 		}),
+		UsersModule,
+		AuthModule,
 		HealthModule,
 	],
-	providers: [{ provide: APP_GUARD, useClass: ThrottlerProxyGuard }],
+	// Guards run in registration order: rate limit first, then authentication, then roles.
+	providers: [
+		{ provide: APP_GUARD, useClass: ThrottlerProxyGuard },
+		{ provide: APP_GUARD, useClass: JwtAuthGuard },
+		{ provide: APP_GUARD, useClass: RolesGuard },
+	],
 })
 export class AppModule {}
