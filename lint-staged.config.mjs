@@ -1,3 +1,3 @@
 export default {
-	"*.{ts,tsx,js,mjs,cjs,json,css,md,yml,yaml}": "prettier --write",
+	"*.{ts,tsx,js,mjs,cjs,json,jsonc,css}": "biome check --write --no-errors-on-unmatched",
 };
