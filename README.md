@@ -37,6 +37,11 @@ cp .env.example .env.local
 npm run dev
 ```
 
+## First run
+
+Open http://localhost:3000. You are sent to the login page; choose **Sign up**. Emails listed in `ADMIN_EMAILS` (backend `.env`) become admins.
+Google login stays hidden until `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` are set.
+
 ## Scripts (run inside `backend/` or `frontend/`)
 
 | Script | What it does |

@@ -1,6 +1,7 @@
 import { Controller, Get, HttpStatus, Res } from "@nestjs/common";
 import { ApiOkResponse, ApiOperation, ApiServiceUnavailableResponse, ApiTags } from "@nestjs/swagger";
 import type { Response } from "express";
+import { Public } from "../../common/decorators/public.decorator.js";
 import { type DbStatus, HealthService } from "./health.service.js";
 
 interface HealthBody {
@@ -18,6 +19,7 @@ const healthSchema = {
 	},
 };
 
+@Public()
 @ApiTags("health")
 @Controller("health")
 export class HealthController {
