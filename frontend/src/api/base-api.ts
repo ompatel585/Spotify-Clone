@@ -1,5 +1,5 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { baseQuery } from "@/api/base-query";
+import { reauthBaseQuery } from "@/api/reauth-base-query";
 import { tagTypes } from "@/api/tags";
 
 export interface HealthResponse {
@@ -11,7 +11,7 @@ export interface HealthResponse {
 /** Root API. Domain slices attach their endpoints with `baseApi.injectEndpoints`. */
 export const baseApi = createApi({
 	reducerPath: "api",
-	baseQuery,
+	baseQuery: reauthBaseQuery,
 	tagTypes,
 	endpoints: (build) => ({
 		health: build.query<HealthResponse, void>({
