@@ -1,3 +1,4 @@
+import { isIP } from "node:net";
 import { z } from "zod";
 
 const PLACEHOLDER_SECRET = /change-?me/i;
@@ -41,6 +42,19 @@ const rawEnvSchema = z.object({
 		.transform((value) => new URL(value).origin),
 	TRUST_PROXY: trustProxy,
 	LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace", "silent"]).default("info"),
+	/** Comma-separated resolver IPs, e.g. "8.8.8.8,1.1.1.1". Empty = use the system resolver. */
+	DNS_SERVERS: z
+		.string()
+		.optional()
+		.transform((value, ctx) => {
+			const servers = (value ?? "")
+				.split(",")
+				.map((item) => item.trim())
+				.filter(Boolean);
+			const bad = servers.find((item) => isIP(item) === 0);
+			if (bad) ctx.addIssue({ code: "custom", message: `"${bad}" is not an IP address` });
+			return servers;
+		}),
 	REQUEST_TIMEOUT_MS: z.coerce.number().int().min(0).default(30_000),
 
 	MONGODB_URI: z.string().regex(/^mongodb(\+srv)?:\/\/.+/, "Must start with mongodb:// or mongodb+srv://"),
