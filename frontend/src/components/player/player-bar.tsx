@@ -9,7 +9,7 @@ import { QueuePanel } from "@/components/player/queue-panel";
 import { SeekBar } from "@/components/player/seek-bar";
 import { TransportControls } from "@/components/player/transport-controls";
 import { VolumeControl } from "@/components/player/volume-control";
-import { useMediaQuery } from "@/hooks/use-media-query";
+import { LARGE_SCREEN_QUERY, useMediaQuery } from "@/hooks/use-media-query";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { selectCurrentSong } from "@/store/selectors/player-selectors";
 import { toggleRightPanel } from "@/store/slices/ui-slice";
@@ -64,13 +64,15 @@ function CompactBar() {
 /** Bottom player: full controls from `md` up, compact bar (only while a song is loaded) on phones. */
 export function PlayerBar() {
 	const isDesktop = useMediaQuery("(min-width: 768px)", true);
+	// From `lg` up the queue lives in the shell's right panel instead of floating.
+	const isLarge = useMediaQuery(LARGE_SCREEN_QUERY, true);
 	const queueOpen = useAppSelector((state) => state.ui.rightPanel === "queue");
 
 	return (
 		<section aria-label="Player" className="shrink-0">
 			<AudioEngine />
 			{isDesktop ? <DesktopBar /> : <CompactBar />}
-			{queueOpen && isDesktop && <QueuePanel />}
+			{queueOpen && isDesktop && !isLarge && <QueuePanel />}
 		</section>
 	);
 }

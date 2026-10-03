@@ -2,6 +2,9 @@
 
 import { useCallback, useSyncExternalStore } from "react";
 
+/** Tailwind `lg`: where the shell gets its right panel (friends / queue). */
+export const LARGE_SCREEN_QUERY = "(min-width: 1024px)";
+
 /**
  * Tracks a CSS media query. `serverValue` is what the server and the hydration pass render; the real value is
  * applied right after, so there is no hydration mismatch.

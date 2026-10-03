@@ -49,8 +49,11 @@ function QueueItem({
 	);
 }
 
-/** Right-hand panel with the playing song and what comes after it. Only shown from `md` up. */
-export function QueuePanel() {
+/**
+ * The playing song and what comes after it. `docked` renders it inside the shell's right panel (`lg` up);
+ * otherwise it floats over the content (`md` to `lg`).
+ */
+export function QueuePanel({ docked = false }: { docked?: boolean }) {
 	const dispatch = useAppDispatch();
 	const current = useAppSelector(selectCurrentSong);
 	const upNext = useAppSelector(selectUpNext);
@@ -68,7 +71,12 @@ export function QueuePanel() {
 	return (
 		<aside
 			aria-label="Queue"
-			className="fixed top-2 right-2 bottom-[5.5rem] z-30 hidden w-80 animate-fade-in flex-col overflow-hidden rounded-lg bg-surface-highlight shadow-2xl shadow-black/60 md:flex"
+			className={cn(
+				"flex-col overflow-hidden",
+				docked
+					? "flex h-full"
+					: "fixed top-2 right-2 bottom-[5.5rem] z-30 hidden w-80 animate-fade-in rounded-lg bg-surface-highlight shadow-2xl shadow-black/60 md:flex",
+			)}
 		>
 			<div className="flex items-center justify-between px-4 pt-4 pb-2">
 				<h2 className="font-bold text-foreground text-lg">Queue</h2>
