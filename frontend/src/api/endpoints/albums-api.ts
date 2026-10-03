@@ -18,4 +18,4 @@ export const albumsApi = baseApi.injectEndpoints({
 	}),
 });
 
-export const { useListAlbumsQuery, useGetAlbumQuery } = albumsApi;
+export const { useListAlbumsQuery, useGetAlbumQuery, useLazyGetAlbumQuery } = albumsApi;

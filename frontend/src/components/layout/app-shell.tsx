@@ -5,6 +5,7 @@ import { useDefaultLayout } from "react-resizable-panels";
 import { LeftSidebar } from "@/components/layout/left-sidebar";
 import { MobileNav } from "@/components/layout/mobile-nav";
 import { Topbar } from "@/components/layout/topbar";
+import { PlayerBar } from "@/components/player/player-bar";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { safeLocalStorage } from "@/services/storage/local-storage";
@@ -59,7 +60,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 					<MainContent>{children}</MainContent>
 				)}
 			</div>
-			{/* The Phase 5 player bar mounts here, between the panels and the mobile nav. */}
+			<PlayerBar />
 			<MobileNav />
 		</div>
 	);

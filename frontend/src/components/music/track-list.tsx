@@ -1,5 +1,8 @@
+"use client";
+
 import { Clock } from "lucide-react";
 import { TrackRow } from "@/components/music/track-row";
+import { usePlayCollection } from "@/hooks/use-play-collection";
 import type { Song } from "@/types/contracts";
 
 interface TrackListProps {
@@ -18,6 +21,8 @@ export function TrackList({
 	showPlays = false,
 	useTrackNumbers = false,
 }: TrackListProps) {
+	const playCollection = usePlayCollection();
+
 	return (
 		<table aria-label={label} className="w-full table-fixed border-separate border-spacing-0">
 			<colgroup>
@@ -55,6 +60,7 @@ export function TrackList({
 						index={useTrackNumbers ? (song.trackNumber ?? position + 1) : position + 1}
 						showCover={showCover}
 						showPlays={showPlays}
+						onPlay={() => playCollection(songs, position)}
 					/>
 				))}
 			</tbody>

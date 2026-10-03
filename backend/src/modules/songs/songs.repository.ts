@@ -23,7 +23,7 @@ const SORTS: Record<SongSort, Record<string, 1 | -1>> = {
 // Case-insensitive title ordering; other sorts are numeric/date and need no collation.
 const TITLE_COLLATION = { locale: "en", strength: 2 } as const;
 
-const WITH_ALBUM_TITLE: PipelineStage.FacetPipelineStage[] = [
+export const WITH_ALBUM_TITLE: PipelineStage.FacetPipelineStage[] = [
 	{
 		$lookup: {
 			from: ALBUMS_COLLECTION,
@@ -61,6 +61,12 @@ export class SongsRepository extends BaseRepository<Song> {
 			sort === "title" ? { collation: TITLE_COLLATION } : {},
 		);
 		return toPaginated(result, page, limit);
+	}
+
+	/** Atomically bumps the counter; resolves to whether the song exists. */
+	async incrementPlayCount(id: string | Types.ObjectId): Promise<boolean> {
+		const result = await this.model.updateOne({ _id: id }, { $inc: { playCount: 1 } });
+		return result.matchedCount > 0;
 	}
 
 	async findByIdWithAlbum(id: string): Promise<SongWithAlbumTitle | null> {
