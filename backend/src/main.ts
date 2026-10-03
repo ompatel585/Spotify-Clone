@@ -5,6 +5,7 @@ import { Logger } from "nestjs-pino";
 import { AppModule } from "./app.module.js";
 import { setupApp } from "./bootstrap/setup-app.js";
 import { setupSecurity } from "./bootstrap/setup-security.js";
+import { setupSocketAdapter } from "./bootstrap/setup-socket-adapter.js";
 import { setupSwagger } from "./bootstrap/setup-swagger.js";
 import { SHUTDOWN_FORCE_EXIT_MS } from "./common/constants/app.constants.js";
 import { type AppConfig, appConfig, validateEnv } from "./config/index.js";
@@ -23,6 +24,7 @@ async function bootstrap(): Promise<void> {
 	setupSecurity(app);
 	setupApp(app);
 	setupSwagger(app);
+	setupSocketAdapter(app);
 
 	process.once("SIGTERM", () => {
 		logger.log("SIGTERM received, shutting down");
