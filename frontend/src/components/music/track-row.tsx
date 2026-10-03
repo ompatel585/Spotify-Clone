@@ -3,6 +3,8 @@
 import { Pause, Play } from "lucide-react";
 import { CoverImage } from "@/components/common/cover-image";
 import { EqualizerIcon } from "@/components/music/equalizer-icon";
+import { LikeButton } from "@/components/music/like-button";
+import { useIsLiked } from "@/hooks/use-is-liked";
 import { cn } from "@/lib/cn";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { isSongCurrent, isSongPlaying } from "@/store/selectors/player-selectors";
@@ -26,6 +28,7 @@ export function TrackRow({ song, index, showCover, showPlays, onPlay }: TrackRow
 	const dispatch = useAppDispatch();
 	const isCurrent = useAppSelector((state) => isSongCurrent(state, song.id));
 	const isPlaying = useAppSelector((state) => isSongPlaying(state, song.id));
+	const isLiked = useIsLiked(song.id);
 	const ActionIcon = isPlaying ? Pause : Play;
 
 	return (
@@ -74,7 +77,19 @@ export function TrackRow({ song, index, showCover, showPlays, onPlay }: TrackRow
 					{formatCompactNumber(song.playCount)}
 				</td>
 			)}
-			<td className={cn(cellClass, "pr-4 text-right tabular-nums")}>{formatDuration(song.duration)}</td>
+			<td className={cn(cellClass, "pr-4")}>
+				<div className="flex items-center justify-end gap-2">
+					{/* Hidden until the row is hovered or focused, except when liked or on touch screens. */}
+					<LikeButton
+						song={song}
+						className={cn(
+							!isLiked &&
+								"opacity-0 pointer-coarse:opacity-100 focus-visible:opacity-100 group-focus-within:opacity-100 group-hover:opacity-100",
+						)}
+					/>
+					<span className="w-10 text-right tabular-nums">{formatDuration(song.duration)}</span>
+				</div>
+			</td>
 		</tr>
 	);
 }

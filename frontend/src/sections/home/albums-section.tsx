@@ -10,12 +10,27 @@ import { SectionHeader } from "@/components/music/section-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { getErrorMessage } from "@/utils/errors";
 
-export function AlbumsSection() {
-	const { data, isLoading, isError, error, refetch } = useListAlbumsQuery({ limit: 12 });
+interface AlbumsSectionProps {
+	/** Used for the heading id, e.g. "albums" -> "albums-heading". */
+	id?: string;
+	title?: string;
+	limit?: number;
+	/** Above-the-fold grids load their first row of covers eagerly. */
+	eagerCount?: number;
+}
+
+export function AlbumsSection({
+	id = "albums",
+	title = "Albums",
+	limit = 12,
+	eagerCount = 0,
+}: AlbumsSectionProps) {
+	const { data, isLoading, isError, error, refetch } = useListAlbumsQuery({ limit });
+	const headingId = `${id}-heading`;
 
 	return (
-		<section aria-labelledby="albums-heading">
-			<SectionHeader id="albums-heading" title="Albums" />
+		<section aria-labelledby={headingId}>
+			<SectionHeader id={headingId} title={title} />
 			{isLoading && (
 				<CardGrid>
 					{Array.from({ length: 6 }, (_, index) => (
@@ -29,8 +44,7 @@ export function AlbumsSection() {
 			{data && data.items.length > 0 && (
 				<CardGrid>
 					{data.items.map((album, index) => (
-						// The first row is above the fold on desktop, so it is the largest contentful paint.
-						<AlbumCard key={album.id} album={album} eager={index < 6} />
+						<AlbumCard key={album.id} album={album} eager={index < eagerCount} />
 					))}
 				</CardGrid>
 			)}
