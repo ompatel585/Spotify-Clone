@@ -9,7 +9,7 @@ Resume point after any interruption (session limit, crash). Update at the end of
 | 3 Auth & users | feature/auth-and-users | done | #4 |
 | 4 Catalog & app shell | feature/catalog-and-app-shell | done | #7 |
 | 5 Audio player | feature/audio-player | done | #8 |
-| 6 Discovery, search & library | | | |
+| 6 Discovery, search & library | feature/discovery-search-library | done | #9 |
 | 7 Realtime presence | | | |
 | 8 Chat | | | |
 | 9 Admin, media & analytics | | | |
@@ -65,3 +65,7 @@ The first attempt used `Spotify/src/{backend,frontend,shared}` with workspaces; 
   seek, volume/mute persisted, queue panel, keyboard shortcuts, Media Session, play tracking on real listened time).
   Verified: lint, typecheck, build clean in both apps; backend multi-user curl flow; reducer logic checks 13/13.
   NOT verified: a real-browser playback run (stopped by the user to ship). Run scratchpad browser-player.mjs next session.
+- Phase 6: discovery (daily-stable featured, new releases, 7-day trending with all-time fill, made-for-you from the user's
+  top artists excluding played songs), ranked search over songs/albums/artists, liked songs (idempotent, optimistic hearts with
+  rollback). Frontend: personalized home shelves, /search with URL-synced query, /library (Liked Songs, Recently played).
+  Verified: lint, typecheck, build clean in both apps; backend two-user curl flow. Real-browser run still owed (with Phase 5).
