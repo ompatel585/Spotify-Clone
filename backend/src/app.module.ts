@@ -2,6 +2,7 @@ import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { APP_GUARD } from "@nestjs/core";
 import { ThrottlerModule } from "@nestjs/throttler";
+import { isPlaysThrottled } from "./common/decorators/plays-throttle.decorator.js";
 import { isStrictThrottled } from "./common/decorators/strict-throttle.decorator.js";
 import { ThrottlerProxyGuard } from "./common/guards/throttler-proxy.guard.js";
 import { configNamespaces, type ThrottleConfig, throttleConfig } from "./config/index.js";
@@ -12,6 +13,7 @@ import { AuthModule } from "./modules/auth/auth.module.js";
 import { JwtAuthGuard } from "./modules/auth/guards/jwt-auth.guard.js";
 import { RolesGuard } from "./modules/auth/guards/roles.guard.js";
 import { HealthModule } from "./modules/health/health.module.js";
+import { PlaysModule } from "./modules/plays/plays.module.js";
 import { SongsModule } from "./modules/songs/songs.module.js";
 import { UsersModule } from "./modules/users/users.module.js";
 
@@ -36,6 +38,12 @@ import { UsersModule } from "./modules/users/users.module.js";
 						limit: config.strict.limit,
 						skipIf: (context) => !isStrictThrottled(context),
 					},
+					{
+						name: "plays",
+						ttl: config.plays.ttlMs,
+						limit: config.plays.limit,
+						skipIf: (context) => !isPlaysThrottled(context),
+					},
 				],
 			}),
 		}),
@@ -43,6 +51,7 @@ import { UsersModule } from "./modules/users/users.module.js";
 		AuthModule,
 		AlbumsModule,
 		SongsModule,
+		PlaysModule,
 		HealthModule,
 	],
 	// Guards run in registration order: rate limit first, then authentication, then roles.

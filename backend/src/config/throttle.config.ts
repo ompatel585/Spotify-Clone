@@ -6,5 +6,6 @@ export const throttleConfig = registerAs("throttle", () => {
 	return {
 		default: { ttlMs: env.THROTTLE_TTL_MS, limit: env.THROTTLE_LIMIT },
 		strict: { ttlMs: env.THROTTLE_STRICT_TTL_MS, limit: env.THROTTLE_STRICT_LIMIT },
+		plays: { ttlMs: env.THROTTLE_PLAYS_TTL_MS, limit: env.THROTTLE_PLAYS_LIMIT },
 	};
 });

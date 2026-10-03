@@ -98,6 +98,9 @@ const rawEnvSchema = z.object({
 	/** Tier for credential-style endpoints (login, register, refresh). */
 	THROTTLE_STRICT_TTL_MS: positiveInt(60_000),
 	THROTTLE_STRICT_LIMIT: positiveInt(10),
+	/** Tier for play reporting: looser than strict, tighter than a spam loop. */
+	THROTTLE_PLAYS_TTL_MS: positiveInt(60_000),
+	THROTTLE_PLAYS_LIMIT: positiveInt(60),
 });
 
 type RawEnv = z.infer<typeof rawEnvSchema>;
