@@ -10,7 +10,7 @@ Resume point after any interruption (session limit, crash). Update at the end of
 | 4 Catalog & app shell | feature/catalog-and-app-shell | done | #7 |
 | 5 Audio player | feature/audio-player | done | #8 |
 | 6 Discovery, search & library | feature/discovery-search-library | done | #9 |
-| 7 Realtime presence | | | |
+| 7 Realtime presence | feature/realtime-presence | done | #10 |
 | 8 Chat | | | |
 | 9 Admin, media & analytics | | | |
 | 10 Testing, CI/CD & deploy | | | |
@@ -69,3 +69,8 @@ The first attempt used `Spotify/src/{backend,frontend,shared}` with workspaces; 
   top artists excluding played songs), ranked search over songs/albums/artists, liked songs (idempotent, optimistic hearts with
   rollback). Frontend: personalized home shelves, /search with URL-synced query, /library (Liked Songs, Recently played).
   Verified: lint, typecheck, build clean in both apps; backend two-user curl flow. Real-browser run still owed (with Phase 5).
+- Phase 7: Socket.io with ticket auth at handshake (user must exist and have an active session; 60 s re-check sweep), multi-tab
+  presence, server-built "now playing" activity (throttled, deduped, race-safe), RealtimeEmitterService for chat; frontend
+  socket client with fresh ticket per (re)connect, realtime slice, debounced activity emitter, Friend Activity right panel.
+  Verified: lint/typecheck/build clean; backend socket script (auth rejections, multi-tab, spoofed titles ignored);
+  two real browsers: friend listed, online, live "now playing", pause clears it, closing shows offline (5/5, no page errors).

@@ -4,13 +4,16 @@ import type { ReactNode } from "react";
 import { Toaster } from "sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AudioProvider } from "@/providers/audio-provider";
+import { SocketProvider } from "@/providers/socket-provider";
 import { StoreProvider } from "@/providers/store-provider";
 
 export function AppProviders({ children }: { children: ReactNode }) {
 	return (
 		<StoreProvider>
 			<TooltipProvider delayDuration={200}>
-				<AudioProvider>{children}</AudioProvider>
+				<SocketProvider>
+					<AudioProvider>{children}</AudioProvider>
+				</SocketProvider>
 				<Toaster
 					theme="dark"
 					position="bottom-center"

@@ -17,4 +17,4 @@ export interface PlayQueueRequest {
 }
 
 /** Side panels that can be shown next to the main content. */
-export type RightPanel = "queue";
+export type RightPanel = "friends" | "queue";

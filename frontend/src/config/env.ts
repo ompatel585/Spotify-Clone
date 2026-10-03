@@ -2,6 +2,8 @@ import { z } from "zod";
 
 const publicSchema = z.object({
 	NEXT_PUBLIC_SITE_URL: z.url().default("http://localhost:3000"),
+	/** Socket.io origin. Empty means the page's own origin (Next proxies `/socket.io`). */
+	NEXT_PUBLIC_SOCKET_URL: z.union([z.url(), z.literal("")]).default(""),
 });
 
 const serverSchema = z.object({
@@ -11,6 +13,7 @@ const serverSchema = z.object({
 /** Public values are inlined at build time, so each must be read by its literal name. */
 export const publicEnv = publicSchema.parse({
 	NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL || undefined,
+	NEXT_PUBLIC_SOCKET_URL: process.env.NEXT_PUBLIC_SOCKET_URL || undefined,
 });
 
 /** Server-only values. Never import this from a client component. */

@@ -11,7 +11,11 @@ export const songsApi = baseApi.injectEndpoints({
 				...(result?.items.map(({ id }) => ({ type: "Song" as const, id })) ?? []),
 			],
 		}),
+		getSong: build.query<Song, string>({
+			query: (id) => `/songs/${encodeURIComponent(id)}`,
+			providesTags: (_result, _error, id) => [{ type: "Song", id }],
+		}),
 	}),
 });
 
-export const { useListSongsQuery } = songsApi;
+export const { useListSongsQuery, useGetSongQuery, useLazyGetSongQuery } = songsApi;

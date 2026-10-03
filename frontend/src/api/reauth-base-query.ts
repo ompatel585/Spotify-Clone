@@ -23,6 +23,26 @@ function redirectToLogin() {
 	window.location.assign(`${routes.login}?expired=1&next=${encodeURIComponent(here)}`);
 }
 
+async function runRefresh(): Promise<boolean> {
+	try {
+		const refresh = await fetch("/api/auth/refresh", { method: "POST", credentials: "include" });
+		if (refresh.ok) return true;
+		// Dead session: drop the cookies (best effort) so the proxy does not bounce /login back to /.
+		await fetch("/api/auth/logout", { method: "POST", credentials: "include" }).catch(() => undefined);
+		return false;
+	} catch {
+		return false;
+	}
+}
+
+/** Rotates the refresh token. Shared by REST calls and the socket, so concurrent callers reuse one request. */
+export function refreshSession(): Promise<boolean> {
+	refreshInFlight ??= runRefresh().finally(() => {
+		refreshInFlight = null;
+	});
+	return refreshInFlight;
+}
+
 export const reauthBaseQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = async (
 	args,
 	api,
@@ -31,19 +51,7 @@ export const reauthBaseQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBase
 	let result = await baseQuery(args, api, extraOptions);
 	if (result.error?.status !== 401 || NO_REFRESH_URLS.has(getRequestUrl(args))) return result;
 
-	refreshInFlight ??= (async () => {
-		try {
-			const refresh = await baseQuery({ url: "/auth/refresh", method: "POST" }, api, extraOptions);
-			if (!refresh.error) return true;
-			// Dead session: drop the cookies (best effort) so the proxy does not bounce /login back to /.
-			await baseQuery({ url: "/auth/logout", method: "POST" }, api, extraOptions);
-			return false;
-		} finally {
-			refreshInFlight = null;
-		}
-	})();
-
-	if (await refreshInFlight) {
+	if (await refreshSession()) {
 		result = await baseQuery(args, api, extraOptions);
 		return result;
 	}

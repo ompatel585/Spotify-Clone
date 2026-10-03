@@ -16,6 +16,7 @@ import { DiscoveryModule } from "./modules/discovery/discovery.module.js";
 import { HealthModule } from "./modules/health/health.module.js";
 import { LibraryModule } from "./modules/library/library.module.js";
 import { PlaysModule } from "./modules/plays/plays.module.js";
+import { RealtimeModule } from "./modules/realtime/realtime.module.js";
 import { SearchModule } from "./modules/search/search.module.js";
 import { SongsModule } from "./modules/songs/songs.module.js";
 import { UsersModule } from "./modules/users/users.module.js";
@@ -58,6 +59,7 @@ import { UsersModule } from "./modules/users/users.module.js";
 		DiscoveryModule,
 		SearchModule,
 		LibraryModule,
+		RealtimeModule,
 		HealthModule,
 	],
 	// Guards run in registration order: rate limit first, then authentication, then roles.
