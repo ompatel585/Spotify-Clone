@@ -29,7 +29,7 @@ export function TrackList({
 				<col className="w-12" />
 				<col />
 				{showPlays && <col className="hidden w-24 md:table-column" />}
-				<col className="w-20" />
+				<col className="w-28" />
 			</colgroup>
 			<thead>
 				<tr className="h-9 text-left font-normal text-muted text-sm">

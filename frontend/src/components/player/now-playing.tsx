@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { CoverImage } from "@/components/common/cover-image";
+import { LikeButton } from "@/components/music/like-button";
 import { routes } from "@/constants/routes";
 import type { Song } from "@/types/contracts";
 
@@ -25,6 +26,7 @@ export function NowPlaying({ song }: { song: Song }) {
 				)}
 				<p className="truncate text-muted text-xs">{song.artist}</p>
 			</div>
+			<LikeButton song={song} />
 		</div>
 	);
 }

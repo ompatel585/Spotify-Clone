@@ -14,7 +14,7 @@ export type AlbumWithStats = Lean<Album> & { songCount: number; totalDuration: n
 export type AlbumWithSongs = AlbumWithStats & { songs: Lean<Song>[] };
 
 // Counting inside the `$lookup` pipeline keeps it to one query for the whole page (no per-album reads).
-const WITH_STATS: PipelineStage.FacetPipelineStage[] = [
+export const WITH_ALBUM_STATS: PipelineStage.FacetPipelineStage[] = [
 	{
 		$lookup: {
 			from: SONGS_COLLECTION,
@@ -53,7 +53,7 @@ export class AlbumsRepository extends BaseRepository<Album> {
 		const [result] = await this.model.aggregate<FacetResult<AlbumWithStats>>([
 			{ $match: match },
 			{ $sort: { createdAt: -1, _id: -1 } },
-			facetPage(page, limit, WITH_STATS),
+			facetPage(page, limit, WITH_ALBUM_STATS),
 		]);
 		return toPaginated(result, page, limit);
 	}

@@ -11,8 +11,8 @@ export interface NavItem {
 
 export const sidebarNavItems: readonly NavItem[] = [
 	{ label: "Home", href: routes.home, icon: Home, available: true },
-	{ label: "Search", href: routes.search, icon: Search, available: false },
-	{ label: "Library", href: routes.library, icon: Library, available: false },
+	{ label: "Search", href: routes.search, icon: Search, available: true },
+	{ label: "Library", href: routes.library, icon: Library, available: true },
 	{ label: "Messages", href: routes.chat(), icon: MessageCircle, available: false },
 ];
 
