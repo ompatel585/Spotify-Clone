@@ -8,9 +8,11 @@ import { CardSkeleton } from "@/components/music/card-skeleton";
 import { SectionHeader } from "@/components/music/section-header";
 import { SongCard } from "@/components/music/song-card";
 import { EmptyState } from "@/components/ui/empty-state";
+import { usePlayCollection } from "@/hooks/use-play-collection";
 import { getErrorMessage } from "@/utils/errors";
 
 export function NewReleasesSection() {
+	const playCollection = usePlayCollection();
 	const { data, isLoading, isError, error, refetch } = useListSongsQuery({ sort: "newest", limit: 8 });
 
 	return (
@@ -28,8 +30,8 @@ export function NewReleasesSection() {
 			{data && data.items.length === 0 && <EmptyState icon={<Music2 />} title="Nothing here yet" />}
 			{data && data.items.length > 0 && (
 				<CardGrid>
-					{data.items.map((song) => (
-						<SongCard key={song.id} song={song} />
+					{data.items.map((song, index) => (
+						<SongCard key={song.id} song={song} onPlay={() => playCollection(data.items, index)} />
 					))}
 				</CardGrid>
 			)}

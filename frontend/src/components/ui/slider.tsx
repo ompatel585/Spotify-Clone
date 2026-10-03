@@ -7,8 +7,15 @@ export function Slider({
 	className,
 	value,
 	defaultValue,
+	thumbLabel,
+	valueText,
 	...props
-}: ComponentProps<typeof SliderPrimitive.Root>) {
+}: ComponentProps<typeof SliderPrimitive.Root> & {
+	/** Accessible name of the thumb(s); Radix does not forward `aria-label` from the root. */
+	thumbLabel?: string;
+	/** Human-readable value announced instead of the raw number, such as "1:23 of 3:45". */
+	valueText?: string;
+}) {
 	const thumbCount = (value ?? defaultValue ?? [0]).length;
 
 	return (
@@ -28,6 +35,8 @@ export function Slider({
 				<SliderPrimitive.Thumb
 					// biome-ignore lint/suspicious/noArrayIndexKey: thumbs are positional and never reordered
 					key={index}
+					aria-label={thumbLabel}
+					aria-valuetext={valueText}
 					className="block size-3 rounded-full bg-foreground opacity-0 shadow transition-opacity focus-visible:opacity-100 group-hover:opacity-100"
 				/>
 			))}

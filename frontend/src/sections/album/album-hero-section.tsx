@@ -1,5 +1,13 @@
+"use client";
+
+import { Pause, Play, Shuffle } from "lucide-react";
 import { CoverImage } from "@/components/common/cover-image";
+import { Button } from "@/components/ui/button";
+import { IconButton } from "@/components/ui/icon-button";
+import { useIsCollectionPlaying, usePlayCollection } from "@/hooks/use-play-collection";
 import { cn } from "@/lib/cn";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { toggleShuffle } from "@/store/slices/player-slice";
 import type { AlbumWithTracks } from "@/types/contracts";
 import { formatTotalDuration } from "@/utils/format";
 
@@ -11,7 +19,13 @@ function titleSizeClass(title: string): string {
 }
 
 export function AlbumHeroSection({ album }: { album: AlbumWithTracks }) {
+	const dispatch = useAppDispatch();
+	const playCollection = usePlayCollection();
+	const isPlaying = useIsCollectionPlaying(album.songs);
+	const shuffle = useAppSelector((state) => state.player.shuffle);
 	const songLabel = album.songCount === 1 ? "1 song" : `${album.songCount} songs`;
+	const PlayIcon = isPlaying ? Pause : Play;
+	const hasSongs = album.songs.length > 0;
 
 	return (
 		<section
@@ -46,6 +60,26 @@ export function AlbumHeroSection({ album }: { album: AlbumWithTracks }) {
 					</p>
 				</div>
 			</div>
+			{hasSongs && (
+				<div className="mt-6 flex items-center justify-center gap-4 md:justify-start">
+					<Button
+						size="icon"
+						aria-label={`${isPlaying ? "Pause" : "Play"} ${album.title}`}
+						onClick={() => playCollection(album.songs)}
+						className="size-14"
+					>
+						<PlayIcon aria-hidden="true" className="size-6 fill-current" />
+					</Button>
+					<IconButton
+						aria-label={shuffle ? "Disable shuffle" : "Enable shuffle"}
+						aria-pressed={shuffle}
+						onClick={() => dispatch(toggleShuffle())}
+						className={cn("size-10 rounded-full", shuffle && "text-primary hover:text-primary-hover")}
+					>
+						<Shuffle aria-hidden="true" className="size-6" />
+					</IconButton>
+				</div>
+			)}
 		</section>
 	);
 }
