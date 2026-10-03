@@ -8,7 +8,7 @@ Resume point after any interruption (session limit, crash). Update at the end of
 | 2 Core infrastructure & design system | feature/core-infrastructure | done | #3 |
 | 3 Auth & users | feature/auth-and-users | done | #4 |
 | 4 Catalog & app shell | feature/catalog-and-app-shell | done | #7 |
-| 5 Audio player | | | |
+| 5 Audio player | feature/audio-player | done | #8 |
 | 6 Discovery, search & library | | | |
 | 7 Realtime presence | | | |
 | 8 Chat | | | |
@@ -60,3 +60,8 @@ The first attempt used `Spotify/src/{backend,frontend,shared}` with workspaces; 
   Tests (scratchpad): 12 catalog API + 20 real-browser checks pass; Phase 3 suites (22 API + 20 browser) still pass.
   Known, not fixed: on a cold `next dev` image cache one 48px sidebar thumbnail can take long to generate; it did not
   reproduce with warm cache or via curl, so it is treated as a dev-server quirk. Re-check on a production build.
+- Phase 5: plays API (POST /plays with 20 s per-user dedupe via an atomic marker, own 60/min rate tier; GET /plays/recent
+  distinct by song) and the full audio player (single audio engine outside routes, queue, shuffle, repeat off/all/one,
+  seek, volume/mute persisted, queue panel, keyboard shortcuts, Media Session, play tracking on real listened time).
+  Verified: lint, typecheck, build clean in both apps; backend multi-user curl flow; reducer logic checks 13/13.
+  NOT verified: a real-browser playback run (stopped by the user to ship). Run scratchpad browser-player.mjs next session.
